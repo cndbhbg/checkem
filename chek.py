@@ -6,22 +6,37 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-# Nếu bạn thay đổi các quyền truy cập, hãy xóa file token.json.
+# Quyền truy cập
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
 def main():
     creds = None
-    # File token.json lưu trữ thông tin xác thực của người dùng.
+    
+    # Lấy client_id và client_secret từ biến môi trường
+    client_id = os.environ.get('GOOGLE_CLIENT_ID')
+    client_secret = os.environ.get('GOOGLE_CLIENT_SECRET')
+    
+    # Xác thực và tạo Credentials
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    # Nếu không có (hoặc không hợp lệ), yêu cầu người dùng đăng nhập.
+
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_dict(
+                {
+                    'installed': {
+                        'client_id': client_id,
+                        'client_secret': client_secret,
+                        'redirect_uris': ['urn:ietf:wg:oauth:2.0:oob'],
+                    }
+                },
+                SCOPES
+            )
             creds = flow.run_local_server(port=0)
-        # Lưu thông tin xác thực để sử dụng lần sau.
+
+        # Lưu thông tin xác thực vào file token.json
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
 
