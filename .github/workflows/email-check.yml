@@ -3,7 +3,7 @@ name: Check Gmail
 on:
   push:  # Kích hoạt khi có push lên repository
   schedule:
-    - cron: '0 * * * *'  # Chạy mỗi giờ
+    - cron: '* * * * *'  # Chạy mỗi giờ
 
 jobs:
   check-email:
