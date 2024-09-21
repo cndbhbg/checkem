@@ -27,4 +27,4 @@ jobs:
       env:
         GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
         GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-      run: python chek2.py
+      run: python chek.py
