@@ -1,5 +1,4 @@
 import os
-import base64
 import json
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -12,11 +11,7 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 def main():
     creds = None
     
-    # Lấy client_id và client_secret từ biến môi trường
-    client_id = os.environ.get('GOOGLE_CLIENT_ID')
-    client_secret = os.environ.get('GOOGLE_CLIENT_SECRET')
-    
-    # Xác thực và tạo Credentials
+    # Lưu ý: Đảm bảo file credentials.json được tải về từ Google Cloud và lưu trữ đúng
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
 
@@ -24,14 +19,9 @@ def main():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_dict(
-                {
-                    'installed': {
-                        'client_id': client_id,
-                        'client_secret': client_secret,
-                        'redirect_uris': ['urn:ietf:wg:oauth:2.0:oob'],
-                    }
-                },
+            # Sử dụng file credentials.json
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json',
                 SCOPES
             )
             creds = flow.run_local_server(port=0)
